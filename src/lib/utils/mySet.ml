@@ -1,5 +1,4 @@
 open Batteries
-
 include Set
 
 (* HACK inefficient *)
