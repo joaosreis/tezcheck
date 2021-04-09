@@ -1,0 +1,6 @@
+(library
+ (name analysis)
+ (public_name tezcheck.analysis)
+ (libraries tezla-cfg base utils lattice dataflow)
+ (preprocess
+  (pps ppx_deriving.ord ppx_sexp_conv ppx_string ppx_jane)))

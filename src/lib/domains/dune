@@ -1,0 +1,7 @@
+(library
+ (name domains)
+ (public_name tezcheck.domains)
+ (libraries tezla tezla-cfg bignum utils)
+ (inline_tests)
+ (preprocess
+  (pps ppx_deriving.ord ppx_sexp_conv ppx_inline_test ppx_jane)))

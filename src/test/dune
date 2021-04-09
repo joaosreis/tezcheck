@@ -1,0 +1,7 @@
+(test
+ (name test)
+ (libraries michelson tezla tezla-cfg absinterp)
+ (preprocess
+  (pps ppx_jane))
+ (modes byte)
+ (flags -g))

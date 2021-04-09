@@ -1,0 +1,6 @@
+(library
+ (name absinterp)
+ (public_name tezcheck.absinterp)
+ (libraries tezla tezla-cfg graphlib core_kernel domains)
+ (preprocess
+  (pps ppx_string ppx_jane)))

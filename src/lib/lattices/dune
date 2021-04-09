@@ -1,0 +1,7 @@
+(library
+ (name lattice)
+ (public_name tezcheck.lattice)
+ (libraries bignum base utils)
+ (preprocess
+  (pps ppx_string))
+ (modules_without_implementation sig))

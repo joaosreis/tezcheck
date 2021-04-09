@@ -19,11 +19,10 @@
 
 (package
  (name tezcheck)
- (synopsis "An CFG generator for Tezla programs")
+ (synopsis "A CFG generator for Tezla programs")
  (depends
   (dune :build)
-  (michelson :build)
-  (tezla :build)
-  (tezla-cfg :build)
-  (batteries :build)
-  (fix :build)))
+  michelson
+  tezla
+  tezla-cfg
+  core_kernel))

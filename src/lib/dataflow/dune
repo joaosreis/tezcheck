@@ -1,0 +1,5 @@
+(library
+ (name dataflow)
+ (public_name tezcheck.dataflow)
+ (libraries tezla-cfg core_kernel lattice)
+ (modules_without_implementation sig))

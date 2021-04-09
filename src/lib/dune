@@ -1,12 +1,4 @@
-(copy_files# analysis/*)
-
-(copy_files# framework/*)
-
-(copy_files# lattices/*)
-
-(copy_files# utils/*)
-
 (library
  (name tezcheck)
  (public_name tezcheck)
- (libraries tezla tezla-cfg batteries fix))
+ (libraries analysis dataflow lattice utils domains))
