@@ -1,4 +1,4 @@
 (library
  (name tezcheck)
  (public_name tezcheck)
- (libraries analysis dataflow lattice utils domains))
+ (libraries dataflow lattices utils domains))

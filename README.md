@@ -1,29 +1,26 @@
 # Tezcheck
 
+![main workflow](https://github.com/joaosreis/tezcheck/actions/workflows/main.yml/badge.svg)
+
 Tezcheck is a static analysis tool for Michelson smart contracts that takes
-advantage of [Tezla](https://gitlab.com/releaselab/fresco/tezla)
-intermediate representation and [SoftCheck](https://gitlab.com/joaosreis/softcheck).
-
-## Requirements
-
-* [Michelson parser and ADT](https://gitlab.com/releaselab/fresco/michelson)
-* [Tezla](https://gitlab.com/releaselab/fresco/tezla)
-* [Tezla CFG generator](https://gitlab.com/releaselab/fresco/tezla-cfg)
+advantage of [Tezla](https://github.com/joaosreis/tezla)
+intermediate representation and [SoftCheck](https://github.com/joaosreis/softcheck).
 
 ## Install instructions
 
 ### Using dune
 
 ```bash
-git clone https://gitlab.com/releaselab/fresco/tezcheck.git
+git clone https://github.com/joaosreis/tezcheck.git
 cd tezcheck
 dune build @install
 dune install
 ```
 
 ### Using opam
+
 ```bash
-opam pin add tezcheck https://gitlab.com/releaselab/fresco/tezcheck.git
+opam install https://github.com/joaosreis/tezcheck.git
 ```
 
 ---

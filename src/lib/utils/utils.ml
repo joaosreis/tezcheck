@@ -1,4 +1,4 @@
-open Core_kernel
+open! Core
 module StringMap = Map.Make (String)
 
 let cartesian_product xs ys =

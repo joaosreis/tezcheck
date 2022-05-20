@@ -1,1 +1,1 @@
-include Non_relational_domain.Make (Type.Make (Interval))
+include Non_relational_domain.Make (Interval)

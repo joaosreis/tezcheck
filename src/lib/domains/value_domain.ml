@@ -1,20 +1,9 @@
-(*
-  Cours "Sémantique et Application à la Vérification de programmes"
-
-  Antoine Miné 2015
-  Marc Chevalier 2018
-  Ecole normale supérieure, Paris, France / CNRS / INRIA
-*)
-
-(*
-  Signature of abstract domains representing sets of integers
-  (for instance: constants or intervals).
- *)
+open! Core
 
 module type VALUE_DOMAIN = sig
   (* type of abstract elements *)
   (* an element of type t abstracts a set of integers *)
-  type t
+  type t [@@deriving sexp_of]
 
   (* unrestricted value: [-oo,+oo] *)
   val top : t
@@ -23,21 +12,20 @@ module type VALUE_DOMAIN = sig
   val bottom : t
 
   (* abstract value for a type *)
-  val type_abs : Tezla.Adt.typ -> t
+  val type_abs : Tezla.Adt.ttyp -> t
 
   (* abstract value for (parameter, storage) *)
-  val param_storage_abs : Tezla.Adt.typ -> Tezla.Adt.typ -> t
+  val param_storage_abs : Tezla.Adt.ttyp -> Tezla.Adt.ttyp -> t
 
   (* set-theoretic operations *)
   val join : t -> t -> t
-
   val meet : t -> t -> t
 
   (* widening *)
   val widen : t -> t -> t
 
   (* subset inclusion of concretizations *)
-  val subset : t -> t -> bool
+  val leq : t -> t -> bool
 
   (* check the emptiness of the concretization *)
   val is_bottom : t -> bool

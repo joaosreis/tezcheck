@@ -1,4 +1,3 @@
-module Analysis = Analysis
-module Dataflow = Dataflow
-module Lattice = Lattice
-module Domains = Domains
+module Dataflow : module type of Dataflow = Dataflow
+module Lattices : module type of Lattices = Lattices
+module Domains : module type of Domains = Domains

@@ -1,4 +1,4 @@
-open Core_kernel
+open! Core
 open Graphlib.Std
 
 module Make (D : Domains.Domain.DOMAIN) = struct

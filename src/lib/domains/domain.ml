@@ -22,10 +22,10 @@ module type DOMAIN = sig
   type env
 
   (* initial environment *)
-  val init_env : Tezla.Adt.var list -> env
+  val init_env : Tezla_cfg.Cfg_node.Var.Set.t -> env
 
   (* initial abstract element *)
-  val init : env -> Tezla.Adt.typ -> Tezla.Adt.typ -> t
+  val init : env -> Tezla.Adt.ttyp -> Tezla.Adt.ttyp -> t
 
   (* empty set of environments *)
   val bottom : env -> t
@@ -40,7 +40,7 @@ module type DOMAIN = sig
   val widen : t -> t -> t
 
   (* whether an abstract element is included in another one *)
-  val subset : t -> t -> bool
+  val leq : t -> t -> bool
 
   (* whether an abstract element is equal to another *)
   val equals : t -> t -> bool
@@ -53,6 +53,5 @@ module type DOMAIN = sig
 
   (* get environment from abstract element *)
   val env : t -> env
-
   val environment_to_string : t -> string
 end
