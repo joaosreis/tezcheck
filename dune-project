@@ -5,11 +5,11 @@
 (generate_opam_files true)
 
 (source
- (uri "git+https://gitlab.com/releaselab/fresco/tezcheck.git"))
+ (uri "git+https://github.com/joaosreis/tezcheck.git"))
 
-(bug_reports "https://gitlab.com/releaselab/fresco/tezcheck/issues")
+(bug_reports "https://github.com/joaosreis/tezcheck/issues")
 
-(homepage "https://gitlab.com/releaselab/fresco/tezcheck")
+(homepage "https://github.com/joaosreis/tezcheck")
 
 (license MIT)
 
@@ -19,11 +19,13 @@
 
 (package
  (name tezcheck)
- (synopsis "An CFG generator for Tezla programs")
+ (synopsis "A CFG generator for Tezla programs")
  (depends
   (dune :build)
-  (michelson :build)
-  (tezla :build)
-  (tezla-cfg :build)
-  (batteries :build)
-  (fix :build)))
+  michelson-adt
+  michelson-parser
+  tezla
+  tezla-cfg
+  lattices
+  (core
+   (>= v0.15))))

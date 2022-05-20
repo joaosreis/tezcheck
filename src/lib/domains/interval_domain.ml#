@@ -1,0 +1,5 @@
+include Apron_helper.Make (struct
+  type man = Polka.loose Polka.t
+
+  let manager = Polka.manager_alloc_loose ()
+end)

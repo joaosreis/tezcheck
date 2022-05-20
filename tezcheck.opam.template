@@ -1,0 +1,7 @@
+pin-depends: [
+    ["michelson-adt.dev" "git+https://github.com/joaosreis/michelson-adt"]
+    ["michelson-parser.dev" "git+https://github.com/joaosreis/michelson-parser"]
+    ["tezla.dev" "git+https://github.com/joaosreis/tezla"]
+    ["tezla-cfg.dev" "git+https://github.com/joaosreis/tezla-cfg"]
+    ["lattices.dev" "git+https://github.com/joaosreis/ocaml-lattices"]
+]

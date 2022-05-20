@@ -1,0 +1,222 @@
+open Apron
+
+module Make (D : sig
+  type man
+
+  val manager : man Manager.t
+end) =
+struct
+  type t = D.man Abstract1.t
+
+  type env = Environment.t
+
+  let manager = D.manager
+
+  exception Top
+
+  let init_env v_l =
+    let v_l' = List.map (fun v -> Var.of_string v.Tezla.Adt.var_name) v_l in
+    let v_a = Array.of_list v_l' in
+    Environment.make v_a [||]
+
+  let init env =
+    let tab = Lincons1.array_make env (Environment.size env) in
+    let _v_a, _ = Environment.vars env in
+    (* Array.iteri
+       (fun i v ->
+         let expr = Linexpr1.make env in
+         Linexpr1.set_array expr
+           [| (Coeff.Scalar (Scalar.Mpqf (Mpqf.of_int 1)), v) |]
+           (Some (Coeff.Scalar (Scalar.Mpqf (Mpqf.of_int 0))));
+         let cons = Lincons1.make expr Lincons1.EQ in
+         Lincons1.array_set tab i cons)
+       v_a; *)
+    Abstract1.of_lincons_array manager env tab
+
+  let bottom env = Abstract1.bottom manager env
+
+  let top env = Abstract1.top manager env
+
+  let expr_to_texpr =
+    let open Tezla.Adt in
+    function
+    | E_push (D_int i, (T_int | T_nat)) ->
+        let i = Mpqf.of_string (Z.to_string i) in
+        Texpr1.Cst (Coeff.s_of_mpqf i)
+    | E_add (v_1, v_2) ->
+        let v_1 = Texpr1.Var (Apron.Var.of_string v_1.var_name) in
+        let v_2 = Texpr1.Var (Apron.Var.of_string v_2.var_name) in
+        Texpr1.Binop (Texpr1.Add, v_1, v_2, Texpr1.Int, Texpr1.Near)
+    | E_sub (v_1, v_2) ->
+        let v_1 = Texpr1.Var (Apron.Var.of_string v_1.var_name) in
+        let v_2 = Texpr1.Var (Apron.Var.of_string v_2.var_name) in
+        Texpr1.Binop (Texpr1.Sub, v_1, v_2, Texpr1.Int, Texpr1.Near)
+    | E_mul (v_1, v_2) ->
+        let v_1 = Texpr1.Var (Apron.Var.of_string v_1.var_name) in
+        let v_2 = Texpr1.Var (Apron.Var.of_string v_2.var_name) in
+        Texpr1.Binop (Texpr1.Mul, v_1, v_2, Texpr1.Int, Texpr1.Near)
+    | E_compare (_v_1, _v_2) ->
+        (* TODO:  let v_1 = Texpr1.Var (Apron.Var.of_string v_1.var_name) in
+           let v_2 = Texpr1.Var (Apron.Var.of_string v_2.var_name) in *)
+        let i_1' = Mpqf.of_int (-1) in
+        let i_2' = Mpqf.of_int 1 in
+        Texpr1.Cst (Coeff.i_of_mpqf i_1' i_2')
+    (* | E_div (v_1, v_2) ->
+        let v_1 = Texpr1.Var (Apron.Var.of_string v_1.var_name) in
+        let v_2 = Texpr1.Var (Apron.Var.of_string v_2.var_name) in
+        Texpr1.Binop (Texpr1.Div, v_1, v_2, Texpr1.Int, Texpr1.Near) *)
+    | _ -> raise Top
+
+  let assign a v expr =
+    try
+      let open Tezla.Adt in
+      match expr with
+      | E_push (D_int i, (T_int | T_nat)) ->
+          let i = Mpqf.of_string (Z.to_string i) in
+          let expr = Texpr1.Cst (Coeff.s_of_mpqf i) in
+          let texpr = Texpr1.of_expr a.Abstract1.env expr in
+          Abstract1.assign_texpr manager a
+            (Var.of_string v.Tezla.Adt.var_name)
+            texpr None
+      | E_add (v_1, v_2) ->
+          let v_1 = Texpr1.Var (Apron.Var.of_string v_1.var_name) in
+          let v_2 = Texpr1.Var (Apron.Var.of_string v_2.var_name) in
+          let expr =
+            Texpr1.Binop (Texpr1.Add, v_1, v_2, Texpr1.Int, Texpr1.Near)
+          in
+          let texpr = Texpr1.of_expr a.Abstract1.env expr in
+          Abstract1.assign_texpr manager a
+            (Var.of_string v.Tezla.Adt.var_name)
+            texpr None
+      | E_sub (v_1, v_2) ->
+          let v_1 = Texpr1.Var (Apron.Var.of_string v_1.var_name) in
+          let v_2 = Texpr1.Var (Apron.Var.of_string v_2.var_name) in
+          let expr =
+            Texpr1.Binop (Texpr1.Sub, v_1, v_2, Texpr1.Int, Texpr1.Near)
+          in
+          let texpr = Texpr1.of_expr a.Abstract1.env expr in
+          Abstract1.assign_texpr manager a
+            (Var.of_string v.Tezla.Adt.var_name)
+            texpr None
+      | E_mul (v_1, v_2) ->
+          let v_1 = Texpr1.Var (Apron.Var.of_string v_1.var_name) in
+          let v_2 = Texpr1.Var (Apron.Var.of_string v_2.var_name) in
+          let expr =
+            Texpr1.Binop (Texpr1.Mul, v_1, v_2, Texpr1.Int, Texpr1.Near)
+          in
+          let texpr = Texpr1.of_expr a.Abstract1.env expr in
+          Abstract1.assign_texpr manager a
+            (Var.of_string v.Tezla.Adt.var_name)
+            texpr None
+      | E_neg v' ->
+          let v' = Texpr1.Var (Apron.Var.of_string v'.var_name) in
+          let expr = Texpr1.Unop (Texpr1.Neg, v', Texpr1.Int, Texpr1.Near) in
+          let texpr = Texpr1.of_expr a.Abstract1.env expr in
+          Abstract1.assign_texpr manager a
+            (Var.of_string v.Tezla.Adt.var_name)
+            texpr None
+      | E_compare (v_1, v_2) ->
+          let v_1 = Texpr1.Var (Apron.Var.of_string v_1.var_name) in
+          let v_2 = Texpr1.Var (Apron.Var.of_string v_2.var_name) in
+          let expr =
+            Texpr1.Binop (Texpr1.Sub, v_1, v_2, Texpr1.Int, Texpr1.Near)
+          in
+          let texpr = Texpr1.of_expr a.Abstract1.env expr in
+          let i = Abstract1.bound_texpr manager a texpr in
+          let i' =
+            if Interval.is_zero i then i
+            else if Scalar.cmp_int i.inf 0 >= 1 then Interval.of_int 1 1
+            else if Scalar.cmp_int i.sup 0 <= -1 then Interval.of_int (-1) (-1)
+            else if Scalar.cmp_int i.inf 0 >= 0 then Interval.of_int 0 1
+            else if Scalar.cmp_int i.sup 0 <= 0 then Interval.of_int (-1) 0
+            else Interval.of_int (-1) 1
+          in
+          let expr = Texpr1.Cst (Coeff.Interval i') in
+          let texpr = Texpr1.of_expr a.Abstract1.env expr in
+          Abstract1.assign_texpr manager a
+            (Var.of_string v.Tezla.Adt.var_name)
+            texpr None
+      | E_abs v' ->
+          let v' = Apron.Var.of_string v'.var_name in
+          let i = Abstract1.bound_variable manager a v' in
+          let inf = if Scalar.sgn i.inf < 0 then Scalar.neg i.inf else i.inf in
+          let sup = if Scalar.sgn i.sup < 0 then Scalar.neg i.sup else i.sup in
+          let min = if Scalar.cmp inf sup >= 0 then sup else inf in
+          let max = if Scalar.cmp inf sup >= 0 then inf else sup in
+          let i' = Interval.of_scalar min max in
+          let expr = Texpr1.Cst (Coeff.Interval i') in
+          let texpr = Texpr1.of_expr a.Abstract1.env expr in
+          Abstract1.assign_texpr manager a
+            (Var.of_string v.Tezla.Adt.var_name)
+            texpr None
+      | E_int_of_nat v' ->
+          let v' = Texpr1.Var (Apron.Var.of_string v'.var_name) in
+          let texpr = Texpr1.of_expr a.Abstract1.env v' in
+          Abstract1.assign_texpr manager a
+            (Var.of_string v.Tezla.Adt.var_name)
+            texpr None
+      | E_phi (v_1, v_2) ->
+          let a_1 =
+            let v' = Apron.Var.of_string v_1.var_name in
+            let i = Abstract1.bound_variable manager a v' in
+            let expr = Texpr1.Cst (Coeff.Interval i) in
+            let texpr = Texpr1.of_expr a.Abstract1.env expr in
+            Abstract1.assign_texpr manager a
+              (Var.of_string v.Tezla.Adt.var_name)
+              texpr None
+          in
+          let a_2 =
+            let v' = Apron.Var.of_string v_2.var_name in
+            let i = Abstract1.bound_variable manager a v' in
+            let expr = Texpr1.Cst (Coeff.Interval i) in
+            let texpr = Texpr1.of_expr a.Abstract1.env expr in
+            Abstract1.assign_texpr manager a
+              (Var.of_string v.Tezla.Adt.var_name)
+              texpr None
+          in
+          Abstract1.join manager a_1 a_2
+      | E_dup v' ->
+          let expr = Texpr1.Var (Apron.Var.of_string v'.var_name) in
+          let texpr = Texpr1.of_expr a.Abstract1.env expr in
+          Abstract1.assign_texpr manager a
+            (Var.of_string v.Tezla.Adt.var_name)
+            texpr None
+      | _ -> raise Top
+    with Top -> a
+
+  (* let guard abs expr =
+       let env = abs.Abstract1.env in
+       let boolexpr = Ast_to_apron.boolexpr_of_bool_expr env expr in
+       let labstract =
+         match boolexpr with
+         | Boolexpr.TRUE -> [ abs ]
+         | Boolexpr.DISJ lconj ->
+             List.map (fun conj -> Abstract1.meet_tcons_array man abs conj) lconj
+       in
+       match labstract with
+       | [] -> Abstract1.bottom man env
+       | [ x ] -> x
+       | _ -> Abstract1.join_array man (Array.of_list labstract)
+
+     let assign a v expr =
+       let texpr =
+         Texpr1.of_expr a.Abstract1.env (Ast_to_apron.texpr_of_int_expr expr)
+       in
+       Abstract1.assign_texpr man a (Var.of_string v.var_name) texpr None *)
+
+  let join = Abstract1.join manager
+
+  let widen = Abstract1.widening manager
+
+  let subset = Abstract1.is_leq manager
+
+  let equals = Abstract1.is_eq manager
+
+  let is_bottom = Abstract1.is_bottom manager
+
+  let print ppf = Abstract1.print ppf
+
+  let env = Abstract1.env
+
+  let print_environment ppf v = Environment.print ppf (Abstract1.env v)
+end
