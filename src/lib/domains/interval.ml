@@ -253,33 +253,84 @@ let expr abs_var e =
   in
   let i =
     match e.Node.value with
-    | E_push { value = { value = (T_int | T_nat | T_mutez), _; _ }, D_int x; _ }
-      ->
+    | E_push
+        {
+          value =
+            ( {
+                value =
+                  ( ( T_int | T_nat | T_mutez | T_timestamp | T_bls12_381_g1
+                    | T_bls12_381_g2 | T_bls12_381_fr ),
+                    _ );
+                _;
+              },
+              D_int x );
+          _;
+        } ->
         Interval (Int x, Int x)
-    | (E_dup v | E_dup_n (_, v) | E_var v | E_abs v | E_neg v) as o -> (
+    | E_dup v | E_dup_n (_, v) | E_var v -> (
+        match abs_var v with Some a -> a | None -> var_not_found [%here] v)
+    | E_abs v ->
         let a =
           match abs_var v with Some a -> a | None -> var_not_found [%here] v
         in
-        match o with
-        | E_var _ | E_dup _ | E_dup_n _ -> a
-        | E_abs _ -> abs a
-        | E_neg _ -> neg a
-        | _ -> assert false)
-    | ( E_add (v_1, v_2)
-      | E_sub (v_1, v_2)
-      | E_mul (v_1, v_2)
-      | E_compare (v_1, v_2) ) as o -> (
+        abs a
+    | E_neg_nat v
+    | E_neg_int v
+    | E_neg_bls12_381_g1 v
+    | E_neg_bls12_381_g2 v
+    | E_neg_bls12_381_fr v ->
+        let a =
+          match abs_var v with Some a -> a | None -> var_not_found [%here] v
+        in
+        neg a
+    | E_add_bls12_381_fr (v_1, v_2)
+    | E_add_bls12_381_g1 (v_1, v_2)
+    | E_add_bls12_381_g2 (v_1, v_2)
+    | E_add_int (v_1, v_2)
+    | E_add_mutez (v_1, v_2)
+    | E_add_nat (v_1, v_2)
+    | E_add_nat_int (v_1, v_2)
+    | E_add_timestamp_int (v_1, v_2) ->
         let a_1, a_2 =
           match (abs_var v_1, abs_var v_2) with
           | Some a_1, Some a_2 -> (a_1, a_2)
           | _ -> vars_not_found [%here] v_1 v_2
         in
-        match o with
-        | E_add _ -> add a_1 a_2
-        | E_sub _ -> add a_1 (neg a_2)
-        | E_mul _ -> mul a_1 a_2
-        | E_compare _ -> compare a_1 a_2
-        | _ -> assert false)
+        add a_1 a_2
+    | E_sub_int (v_1, v_2)
+    | E_sub_mutez (v_1, v_2)
+    | E_sub_nat (v_1, v_2)
+    | E_sub_nat_int (v_1, v_2)
+    | E_sub_timestamp (v_1, v_2)
+    | E_sub_timestamp_int (v_1, v_2) ->
+        let a_1, a_2 =
+          match (abs_var v_1, abs_var v_2) with
+          | Some a_1, Some a_2 -> (a_1, a_2)
+          | _ -> vars_not_found [%here] v_1 v_2
+        in
+        add a_1 (neg a_2)
+    | E_mul_bls12_381_fr_bls12_381_fr (v_1, v_2)
+    | E_mul_bls12_381_g1_bls12_381_fr (v_1, v_2)
+    | E_mul_bls12_381_g2_bls12_381_fr (v_1, v_2)
+    | E_mul_int (v_1, v_2)
+    | E_mul_mutez_nat (v_1, v_2)
+    | E_mul_int_bls12_381_fr (v_1, v_2)
+    | E_mul_nat (v_1, v_2)
+    | E_mul_nat_bls12_381_fr (v_1, v_2)
+    | E_mul_nat_int (v_1, v_2) ->
+        let a_1, a_2 =
+          match (abs_var v_1, abs_var v_2) with
+          | Some a_1, Some a_2 -> (a_1, a_2)
+          | _ -> vars_not_found [%here] v_1 v_2
+        in
+        mul a_1 a_2
+    | E_compare (v_1, v_2) ->
+        let a_1, a_2 =
+          match (abs_var v_1, abs_var v_2) with
+          | Some a_1, Some a_2 -> (a_1, a_2)
+          | _ -> vars_not_found [%here] v_1 v_2
+        in
+        compare a_1 a_2
     | _ -> bottom
   in
   interval_invariant i
