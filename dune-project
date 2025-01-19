@@ -28,4 +28,4 @@
   tezla-cfg
   lattices
   (core
-   (>= v0.15))))
+   (and (>= v0.14) (< v0.15)))))

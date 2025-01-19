@@ -13,7 +13,7 @@ depends: [
   "tezla"
   "tezla-cfg"
   "lattices"
-  "core" {>= "v0.15"}
+  "core" {>= "v0.14" & < "v0.15"}
 ]
 build: [
   ["dune" "subst"] {pinned}
