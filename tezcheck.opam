@@ -31,9 +31,9 @@ build: [
 ]
 dev-repo: "git+https://github.com/joaosreis/tezcheck.git"
 pin-depends: [
-    ["michelson-adt.dev" "git+https://github.com/joaosreis/michelson-adt"]
-    ["michelson-parser.dev" "git+https://github.com/joaosreis/michelson-parser"]
-    ["tezla.dev" "git+https://github.com/joaosreis/tezla"]
-    ["tezla-cfg.dev" "git+https://github.com/joaosreis/tezla-cfg"]
-    ["lattices.dev" "git+https://github.com/joaosreis/ocaml-lattices"]
+    ["michelson-adt.dev" "git+https://github.com/joaosreis/michelson-adt#36d8f738406ed7e64ae8642bc98dbe64b31df4aa"]
+    ["michelson-parser.dev" "git+https://github.com/joaosreis/michelson-parser#22bca908d438c9688e736970578601e5e9304c11"]
+    ["tezla.dev" "git+https://github.com/joaosreis/tezla#e640c17e770a76ed717e225551babaa66c52c523"]
+    ["tezla-cfg.dev" "git+https://github.com/joaosreis/tezla-cfg#db4c4da9243ad2dc6b1a52b72a63392f24d1d6d4"]
+    ["lattices.dev" "git+https://github.com/joaosreis/ocaml-lattices#1c338dba0a4fd6c1921c4993b3527642b1a74f87"]
 ]
